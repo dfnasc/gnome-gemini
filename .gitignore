@@ -1,0 +1,6 @@
+*.zip
+schemas/gschemas.compiled
+.vscode/
+.idea/
+*~
+*.swp

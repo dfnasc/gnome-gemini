@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="gnome-gemini">
+  <schema id="org.gnome.shell.extensions.gnome-gemini" path="/org/gnome/shell/extensions/gnome-gemini/">
+    <key name="api-key" type="s">
+      <default>""</default>
+      <summary>Gemini API Key</summary>
+      <description>Google Gemini API Key for authentication.</description>
+    </key>
+    <key name="model" type="s">
+      <default>"gemini-2.5-flash"</default>
+      <summary>Gemini Model</summary>
+      <description>Gemini model to use for generating responses.</description>
+    </key>
+    <key name="system-instruction" type="s">
+      <default>"You are Gnome Gemini, an intelligent assistant integrated into GNOME Shell desktop. Be concise and helpful."</default>
+      <summary>System Instruction</summary>
+      <description>System instruction to guide Gemini behavior.</description>
+    </key>
+    <key name="temperature" type="d">
+      <default>0.7</default>
+      <summary>Temperature</summary>
+      <description>Sampling temperature between 0.0 and 2.0.</description>
+    </key>
+    <key name="remember-history" type="b">
+      <default>true</default>
+      <summary>Remember Chat History</summary>
+      <description>Whether to send previous messages in the current conversation to the model.</description>
+    </key>
+  </schema>
+</schemalist>

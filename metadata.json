@@ -2,6 +2,7 @@
   "name": "Gnome Gemini",
   "description": "Gemini AI assistant integration for GNOME Shell",
   "uuid": "gnome-gemini@dfnasc",
+  "settings-schema": "org.gnome.shell.extensions.gnome-gemini",
   "shell-version": [
     "50"
   ]

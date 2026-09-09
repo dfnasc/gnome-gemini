@@ -1,1 +1,239 @@
-/* Add your custom extension styling here */
+/* Gnome Gemini Extension Stylesheet */
+
+.gemini-panel-button {
+    spacing: 4px;
+}
+
+.gemini-panel-icon {
+    icon-size: 16px;
+}
+
+.gemini-chat-container {
+    width: 450px;
+    height: 520px;
+    padding: 12px;
+    spacing: 10px;
+}
+
+/* Header */
+.gemini-header-box {
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.gemini-title-label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.gemini-model-badge {
+    font-size: 10px;
+    font-weight: bold;
+    background-color: rgba(53, 132, 228, 0.25);
+    color: #78aeed;
+    border: 1px solid rgba(53, 132, 228, 0.5);
+    border-radius: 999px;
+    padding: 2px 8px;
+    margin-left: 8px;
+}
+
+.gemini-icon-button {
+    border-radius: 6px;
+    padding: 6px;
+    color: #deddda;
+    background-color: transparent;
+}
+
+.gemini-icon-button:hover {
+    background-color: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+}
+
+.gemini-icon-button:active {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Scroll & Messages */
+.gemini-scroll-view {
+    height: 380px;
+    padding-right: 4px;
+}
+
+.gemini-messages-box {
+    spacing: 12px;
+    padding: 4px 0;
+}
+
+/* Message bubbles */
+.gemini-message-wrapper {
+    spacing: 4px;
+}
+
+.gemini-message-wrapper-user {
+    margin-left: 48px;
+}
+
+.gemini-message-wrapper-model {
+    margin-right: 16px;
+}
+
+.gemini-user-bubble {
+    background-color: #1c4a7e;
+    color: #ffffff;
+    border-radius: 14px 14px 2px 14px;
+    padding: 8px 12px;
+}
+
+.gemini-model-bubble {
+    background-color: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #eeeeec;
+    border-radius: 14px 14px 14px 2px;
+    padding: 10px 12px;
+    spacing: 6px;
+}
+
+.gemini-model-header {
+    spacing: 6px;
+}
+
+.gemini-sender-label {
+    font-size: 11px;
+    font-weight: bold;
+    color: #9a9996;
+}
+
+.gemini-text-label {
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.gemini-copy-button {
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 11px;
+    background-color: rgba(255, 255, 255, 0.06);
+    color: #9a9996;
+}
+
+.gemini-copy-button:hover {
+    background-color: rgba(255, 255, 255, 0.16);
+    color: #ffffff;
+}
+
+/* Error Bubble */
+.gemini-error-bubble {
+    background-color: rgba(192, 28, 40, 0.25);
+    border: 1px solid rgba(224, 27, 36, 0.5);
+    border-radius: 12px;
+    padding: 10px 12px;
+    spacing: 8px;
+}
+
+.gemini-error-text {
+    color: #ff7b72;
+    font-size: 12px;
+}
+
+.gemini-action-button {
+    background-color: #3584e4;
+    color: #ffffff;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.gemini-action-button:hover {
+    background-color: #1c71d8;
+}
+
+/* Loading Indicator */
+.gemini-loading-box {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 8px 12px;
+    spacing: 8px;
+}
+
+.gemini-loading-label {
+    font-size: 12px;
+    color: #c0bfbc;
+    font-style: italic;
+}
+
+/* Empty State / Welcome */
+.gemini-welcome-box {
+    spacing: 12px;
+    padding: 36px 16px;
+}
+
+.gemini-welcome-icon {
+    icon-size: 40px;
+    color: #78aeed;
+}
+
+.gemini-welcome-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.gemini-welcome-subtitle {
+    font-size: 12px;
+    color: #9a9996;
+    text-align: center;
+}
+
+.gemini-suggestion-chip {
+    background-color: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    padding: 6px 12px;
+    margin: 3px;
+    font-size: 11px;
+    color: #deddda;
+}
+
+.gemini-suggestion-chip:hover {
+    background-color: rgba(53, 132, 228, 0.2);
+    border-color: #3584e4;
+    color: #ffffff;
+}
+
+/* Input Row */
+.gemini-input-row {
+    spacing: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.gemini-input-entry {
+    border-radius: 8px;
+    padding: 6px 10px;
+    background-color: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    font-size: 13px;
+}
+
+.gemini-input-entry:focus {
+    border-color: #3584e4;
+}
+
+.gemini-send-button {
+    background-color: #3584e4;
+    color: #ffffff;
+    border-radius: 8px;
+    padding: 6px 14px;
+}
+
+.gemini-send-button:hover {
+    background-color: #1c71d8;
+}
+
+.gemini-send-button:disabled {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.3);
+}

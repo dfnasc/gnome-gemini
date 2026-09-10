@@ -299,8 +299,16 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
             can_focus: true,
             tooltip_text: _('Carregar sessões anteriores')
         });
+
+        this._historyMenu = new PopupMenu.PopupMenu(historyBtn, 0.5, St.Side.TOP);
+        Main.uiGroup.add_child(this._historyMenu.actor);
+        this._historyMenu.actor.hide();
+        this._historyMenuManager = new PopupMenu.PopupMenuManager(historyBtn);
+        this._historyMenuManager.addMenu(this._historyMenu);
+
         historyBtn.connect('clicked', () => {
-            // TODO: Implement loading sessions
+            this._updateHistoryMenu();
+            this._historyMenu.toggle();
         });
         headerBox.add_child(historyBtn);
 
@@ -775,6 +783,84 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
         } catch (e) {
             console.error(`GnomeGemini: Error initiating session save: ${e.message}`);
         }
+    }
+
+    _updateHistoryMenu() {
+        this._historyMenu.removeAll();
+        const dir = Gio.File.new_for_path(this._historyDir);
+        
+        let enumerator;
+        try {
+            enumerator = dir.enumerate_children('standard::name,time::modified', Gio.FileQueryInfoFlags.NONE, null);
+        } catch (e) {
+            return;
+        }
+
+        const files = [];
+        let info;
+        while ((info = enumerator.next_file(null)) !== null) {
+            if (info.get_name().endsWith('.json')) {
+                files.push({
+                    name: info.get_name(),
+                    mtime: info.get_attribute_uint64('time::modified')
+                });
+            }
+        }
+        
+        files.sort((a, b) => b.mtime - a.mtime);
+
+        files.forEach(f => {
+            const file = dir.get_child(f.name);
+            const [success, contents] = file.load_contents(null);
+            if (success) {
+                try {
+                    const text = new TextDecoder().decode(contents);
+                    const hist = JSON.parse(text);
+                    if (hist && hist.length > 0) {
+                        const firstMsg = hist[0].parts[0].text;
+                        const label = firstMsg.length > 30 ? firstMsg.substring(0, 30) + '...' : firstMsg;
+                        
+                        const item = new PopupMenu.PopupMenuItem(label);
+                        item.connect('activate', () => {
+                            this._historyMenu.close();
+                            this._loadSession(f.name.replace('.json', ''), hist);
+                        });
+                        this._historyMenu.addMenuItem(item);
+                    }
+                } catch(e) {
+                    console.error(`GnomeGemini: Erro ao parsear histórico ${f.name}: ${e}`);
+                }
+            }
+        });
+        
+        if (files.length === 0) {
+            const emptyItem = new PopupMenu.PopupMenuItem(_('Nenhuma sessão salva'));
+            emptyItem.setSensitive(false);
+            this._historyMenu.addMenuItem(emptyItem);
+        }
+    }
+
+    _loadSession(sessionId, histArray) {
+        this._apiClient.cancelCurrentRequest();
+        this._history = histArray;
+        this._sessionId = sessionId;
+        this._isLoading = false;
+        this._sendButton.reactive = true;
+        this._isWelcomeState = false;
+        
+        this._messagesBox.remove_all_children();
+
+        histArray.forEach(msg => {
+            if (!msg.parts || msg.parts.length === 0) return;
+            const text = msg.parts[0].text;
+            if (msg.role === 'user') {
+                this._addUserMessage(text);
+            } else {
+                this._addModelMessage(text);
+            }
+        });
+        
+        this._scrollToBottom();
     }
 
     _addUserMessage(text) {
@@ -1495,6 +1581,10 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
         if (this._modelMenu) {
             this._modelMenu.destroy();
             this._modelMenu = null;
+        }
+        if (this._historyMenu) {
+            this._historyMenu.destroy();
+            this._historyMenu = null;
         }
         super.destroy();
     }

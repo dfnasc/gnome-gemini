@@ -9,7 +9,7 @@ compile-schemas:
 	glib-compile-schemas schemas/
 
 pack: compile-schemas
-	gnome-extensions pack --force $(foreach src,$(EXTRA_SOURCES),--extra-source=$(src))
+	gnome-extensions pack --force --podir=po --gettext-domain=gnome-gemini $(foreach src,$(EXTRA_SOURCES),--extra-source=$(src))
 
 install: pack
 	gnome-extensions install --force $(UUID).shell-extension.zip

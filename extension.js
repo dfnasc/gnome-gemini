@@ -386,7 +386,7 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
 
         this._entry = new St.Entry({
             style_class: 'gemini-input-entry',
-            hint_text: _('Pergunte algo ao Gemini... (Enter para enviar)'),
+            hint_text: _('Ask Gemini something... (Enter to send)'),
             can_focus: true,
             x_expand: true,
         });
@@ -603,14 +603,14 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
         welcomeBox.add_child(icon);
 
         const title = new St.Label({
-            text: _('Como posso ajudar hoje?'),
+            text: _('How can I help today?'),
             style_class: 'gemini-welcome-title',
             x_align: Clutter.ActorAlign.CENTER,
         });
         welcomeBox.add_child(title);
 
         const subtitle = new St.Label({
-            text: _('Pergunte sobre código, ideias, resumos ou comandos do sistema.'),
+            text: _('Ask about code, ideas, summaries, or system commands.'),
             style_class: 'gemini-welcome-subtitle',
             x_align: Clutter.ActorAlign.CENTER,
         });
@@ -625,9 +625,9 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
         });
 
         const suggestions = [
-            _('💡 Explique o que é o GNOME Shell'),
-            _('🐧 Comando bash para monitorar uso de memória'),
-            _('✍️ Escreva um script em Python para renomear arquivos'),
+            _('💡 Explain what GNOME Shell is'),
+            _('🐧 Bash command to monitor memory usage'),
+            _('✍️ Write a Python script to rename files'),
         ];
 
         suggestions.forEach(text => {
@@ -834,7 +834,7 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
         });
         
         if (files.length === 0) {
-            const emptyItem = new PopupMenu.PopupMenuItem(_('Nenhuma sessão salva'));
+            const emptyItem = new PopupMenu.PopupMenuItem(_('No saved sessions'));
             emptyItem.setSensitive(false);
             this._historyMenu.addMenuItem(emptyItem);
         }
@@ -944,7 +944,7 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
 
         const descText = segment.description && segment.description.trim()
             ? segment.description.trim()
-            : _('Comando sugerido');
+            : _('Suggested command');
 
         const descLabel = new St.Label({
             text: descText,
@@ -979,7 +979,7 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
             icon_size: 12,
         });
         const copyLabel = new St.Label({
-            text: _('Copiar'),
+            text: _('Copy'),
             y_align: Clutter.ActorAlign.CENTER,
         });
         copyContent.add_child(copyIcon);
@@ -989,11 +989,11 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
         copyBtn.connect('clicked', () => {
             const clipboard = St.Clipboard.get_default();
             clipboard.set_text(St.ClipboardType.CLIPBOARD, segment.command);
-            copyLabel.text = _('✓ Copiado!');
+            copyLabel.text = _('✓ Copied!');
             copyIcon.icon_name = 'emblem-ok-symbolic';
             GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, 2, () => {
                 if (!this._isDestroyed) {
-                    copyLabel.text = _('Copiar');
+                    copyLabel.text = _('Copy');
                     copyIcon.icon_name = 'edit-copy-symbolic';
                 }
                 return GLib.SOURCE_REMOVE;
@@ -1015,7 +1015,7 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
             icon_size: 12,
         });
         const execLabel = new St.Label({
-            text: _('Executar'),
+            text: _('Execute'),
             y_align: Clutter.ActorAlign.CENTER,
         });
         execContent.add_child(execIcon);
@@ -1072,7 +1072,7 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
             this._activeCommandCancellables.add(runningCancellable);
 
             execBtn.reactive = false;
-            execLabel.text = _('Executando...');
+            execLabel.text = _('Executing...');
             execIcon.icon_name = 'process-working-symbolic';
             execBtn.add_style_class_name('gemini-command-btn-running');
 
@@ -1092,7 +1092,7 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
             runningRow.add_child(spinIcon);
 
             const runningStatus = new St.Label({
-                text: _('Executando comando no sistema em background...'),
+                text: _('Executing command in background...'),
                 style_class: 'gemini-feedback-status-label',
                 y_align: Clutter.ActorAlign.CENTER,
             });
@@ -1103,7 +1103,7 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
 
             const cancelBtn = new St.Button({
                 style_class: 'gemini-command-cancel-btn',
-                label: _('Cancelar'),
+                label: _('Cancel'),
                 can_focus: true,
             });
             cancelBtn.connect('clicked', () => {
@@ -1127,7 +1127,7 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
 
             // Reset execute button
             execBtn.reactive = true;
-            execLabel.text = _('Executar novamente');
+            execLabel.text = _('Run again');
             execIcon.icon_name = 'system-run-symbolic';
             execBtn.remove_style_class_name('gemini-command-btn-running');
 
@@ -1152,7 +1152,7 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
 
             let statusText = '';
             if (result.isCancelled) {
-                statusText = _('Execução cancelada pelo usuário.');
+                statusText = _('Execution cancelled by user.');
             } else if (result.success) {
                 statusText = _(`Sucesso (código ${result.exitCode} • ${result.durationMs}ms)`);
             } else {
@@ -1178,17 +1178,17 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
             if (hasOutput) {
                 const copyOutBtn = new St.Button({
                     style_class: 'gemini-command-copy-out-btn',
-                    label: _('Copiar saída'),
+                    label: _('Copy output'),
                     can_focus: true,
                 });
                 copyOutBtn.connect('clicked', () => {
                     const fullOut = [result.stdout, result.stderr].filter(Boolean).join('\n').trim();
                     const clipboard = St.Clipboard.get_default();
                     clipboard.set_text(St.ClipboardType.CLIPBOARD, fullOut);
-                    copyOutBtn.label = _('✓ Copiado!');
+                    copyOutBtn.label = _('✓ Copied!');
                     GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, 2, () => {
                         if (!this._isDestroyed) {
-                            copyOutBtn.label = _('Copiar saída');
+                            copyOutBtn.label = _('Copy output');
                         }
                         return GLib.SOURCE_REMOVE;
                     });
@@ -1235,7 +1235,7 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
                 feedbackBox.add_child(outContainer);
             } else if (!result.isCancelled) {
                 const noOutLabel = new St.Label({
-                    text: _('(Comando executado sem saída de terminal)'),
+                    text: _('(Command executed with no output)'),
                     style_class: 'gemini-feedback-empty-output',
                 });
                 feedbackBox.add_child(noOutLabel);
@@ -1285,16 +1285,16 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
         // Copy button for entire message
         const copyBtn = new St.Button({
             style_class: 'gemini-copy-button',
-            label: _('Copiar'),
+            label: _('Copy'),
             can_focus: true,
         });
         copyBtn.connect('clicked', () => {
             const clipboard = St.Clipboard.get_default();
             clipboard.set_text(St.ClipboardType.CLIPBOARD, markdownText);
-            copyBtn.label = _('✓ Copiado!');
+            copyBtn.label = _('✓ Copied!');
             GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, 2, () => {
                 if (!this._isDestroyed) {
-                    copyBtn.label = _('Copiar');
+                    copyBtn.label = _('Copy');
                 }
                 return GLib.SOURCE_REMOVE;
             });
@@ -1347,7 +1347,7 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
         loadingBox.add_child(icon);
 
         const label = new St.Label({
-            text: _('Gemini está pensando...'),
+            text: _('Gemini is thinking...'),
             style_class: 'gemini-loading-label',
             y_align: Clutter.ActorAlign.CENTER,
         });
@@ -1366,7 +1366,7 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
         }
     }
 
-    _addErrorBubble(message, showAction = false, actionLabel = _('Configurar Chave de API')) {
+    _addErrorBubble(message, showAction = false, actionLabel = _('Configure API Key')) {
         if (this._isWelcomeState) {
             this._messagesBox.remove_all_children();
             this._isWelcomeState = false;
@@ -1431,7 +1431,7 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
 
         const apiKey = this._settings.get_string('api-key');
         if (!apiKey || apiKey.trim() === '') {
-            const errBubble = this._addErrorBubble(_('A chave da API do Gemini não está configurada.'), true, _('Configurar Chave de API'));
+            const errBubble = this._addErrorBubble(_('Gemini API key is not configured.'), true, _('Configure API Key'));
             userMsgObj.retryBtn.show();
             userMsgObj.retryBtn.connect('clicked', () => {
                 this._handleSend(userMsgObj.text, userMsgObj.wrapper, errBubble);
@@ -1524,9 +1524,9 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
 
             let errBubble = null;
             if (isApiKeyError) {
-                errBubble = this._addErrorBubble(msg, true, _('Configurar Chave de API'));
+                errBubble = this._addErrorBubble(msg, true, _('Configure API Key'));
             } else if (isModelOrServiceError) {
-                errBubble = this._addErrorBubble(msg, true, _('Trocar Modelo nas Preferências'));
+                errBubble = this._addErrorBubble(msg, true, _('Change Model in Preferences'));
             } else {
                 errBubble = this._addErrorBubble(msg, false);
             }

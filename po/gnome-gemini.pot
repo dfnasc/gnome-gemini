@@ -1,0 +1,240 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-10 18:26-0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: prefs.js:22
+msgid "General"
+msgstr ""
+
+#: prefs.js:29
+msgid "API Authentication"
+msgstr ""
+
+#: prefs.js:30
+msgid ""
+"Enter your Google Gemini API key. You can generate a free key at https://"
+"aistudio.google.com/app/apikey"
+msgstr ""
+
+#: prefs.js:35
+msgid "API Key (Gemini API Key)"
+msgstr ""
+
+#: prefs.js:46
+msgid "AI Model and Options"
+msgstr ""
+
+#: prefs.js:47
+msgid "Configure which Gemini model to use and generation parameters."
+msgstr ""
+
+#: prefs.js:80
+msgid "Primary Model"
+msgstr ""
+
+#: prefs.js:81
+msgid "Secondary Model (Fallback 1)"
+msgstr ""
+
+#: prefs.js:82
+msgid "Tertiary Model (Fallback 2)"
+msgstr ""
+
+#: prefs.js:83
+msgid "Quaternary Model (Fallback 3)"
+msgstr ""
+
+#: prefs.js:84
+msgid "Quinary Model (Fallback 4)"
+msgstr ""
+
+#: prefs.js:90
+msgid "Primary model used for generation."
+msgstr ""
+
+#: prefs.js:90
+msgid "Used automatically if the previous ones hit the rate limit"
+msgstr ""
+
+#: prefs.js:118
+msgid "Temperature"
+msgstr ""
+
+#: prefs.js:119
+msgid "Controls response creativity (0.0 more precise, 2.0 more creative)"
+msgstr ""
+
+#: prefs.js:136
+msgid "Keep Conversation History"
+msgstr ""
+
+#: prefs.js:137
+msgid "Preserves previous messages to keep context during chat"
+msgstr ""
+
+#: prefs.js:147
+msgid "System Instruction (Personality)"
+msgstr ""
+
+#: prefs.js:158
+msgid "Detected System Environment"
+msgstr ""
+
+#: prefs.js:168
+msgid "Appearance and Shortcuts"
+msgstr ""
+
+#: prefs.js:169
+msgid "Configure popup opening position and keyboard shortcuts."
+msgstr ""
+
+#: prefs.js:175
+msgid "Top bar corner (Default)"
+msgstr ""
+
+#: prefs.js:176
+msgid "Screen center (0.8 × display size)"
+msgstr ""
+
+#: prefs.js:183
+msgid "Opening Position"
+msgstr ""
+
+#: prefs.js:184
+msgid ""
+"Choose between opening in the top corner or centered occupying 80% of the "
+"screen"
+msgstr ""
+
+#: prefs.js:204
+msgid "Keyboard Shortcut"
+msgstr ""
+
+#: prefs.js:205
+msgid ""
+"Shortcut to quickly open or close Gemini. Click Change and press the keys "
+"(Backspace to disable)."
+msgstr ""
+
+#: prefs.js:221
+msgid "Disabled"
+msgstr ""
+
+#: prefs.js:227 prefs.js:245
+msgid "Change"
+msgstr ""
+
+#: prefs.js:233
+msgid "Restore default shortcut (<Control>g)"
+msgstr ""
+
+#: prefs.js:251
+msgid "Press keys..."
+msgstr ""
+
+#: extension.js:157
+msgid "Gemini"
+msgstr ""
+
+#: extension.js:389
+msgid "Ask Gemini something... (Enter to send)"
+msgstr ""
+
+#: extension.js:606
+msgid "How can I help today?"
+msgstr ""
+
+#: extension.js:613
+msgid "Ask about code, ideas, summaries, or system commands."
+msgstr ""
+
+#: extension.js:628
+msgid "💡 Explain what GNOME Shell is"
+msgstr ""
+
+#: extension.js:629
+msgid "🐧 Bash command to monitor memory usage"
+msgstr ""
+
+#: extension.js:630
+msgid "✍️ Write a Python script to rename files"
+msgstr ""
+
+#: extension.js:837
+msgid "No saved sessions"
+msgstr ""
+
+#: extension.js:947
+msgid "Suggested command"
+msgstr ""
+
+#: extension.js:982 extension.js:996 extension.js:1288 extension.js:1297
+msgid "Copy"
+msgstr ""
+
+#: extension.js:992 extension.js:1188 extension.js:1294
+msgid "✓ Copied!"
+msgstr ""
+
+#: extension.js:1018
+msgid "Execute"
+msgstr ""
+
+#: extension.js:1075
+msgid "Executing..."
+msgstr ""
+
+#: extension.js:1095
+msgid "Executing command in background..."
+msgstr ""
+
+#: extension.js:1106
+msgid "Cancel"
+msgstr ""
+
+#: extension.js:1130
+msgid "Run again"
+msgstr ""
+
+#: extension.js:1155
+msgid "Execution cancelled by user."
+msgstr ""
+
+#: extension.js:1181 extension.js:1191
+msgid "Copy output"
+msgstr ""
+
+#: extension.js:1238
+msgid "(Command executed with no output)"
+msgstr ""
+
+#: extension.js:1350
+msgid "Gemini is thinking..."
+msgstr ""
+
+#: extension.js:1369 extension.js:1434 extension.js:1527
+msgid "Configure API Key"
+msgstr ""
+
+#: extension.js:1434
+msgid "Gemini API key is not configured."
+msgstr ""
+
+#: extension.js:1529
+msgid "Change Model in Preferences"
+msgstr ""

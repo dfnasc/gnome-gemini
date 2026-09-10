@@ -19,20 +19,20 @@ export default class GnomeGeminiPreferences extends ExtensionPreferences {
 
         // Page: General
         const page = new Adw.PreferencesPage({
-            title: _('Geral'),
+            title: _('General'),
             icon_name: 'preferences-other-symbolic',
         });
         window.add(page);
 
         // Group: API Credentials
         const apiGroup = new Adw.PreferencesGroup({
-            title: _('Autenticação da API'),
-            description: _('Informe sua chave de API do Google Gemini. Você pode gerar uma chave gratuitamente em https://aistudio.google.com/app/apikey'),
+            title: _('API Authentication'),
+            description: _('Enter your Google Gemini API key. You can generate a free key at https://aistudio.google.com/app/apikey'),
         });
         page.add(apiGroup);
 
         const apiKeyRow = new Adw.PasswordEntryRow({
-            title: _('Chave da API (Gemini API Key)'),
+            title: _('API Key (Gemini API Key)'),
             text: settings.get_string('api-key'),
             show_apply_button: false,
         });
@@ -43,8 +43,8 @@ export default class GnomeGeminiPreferences extends ExtensionPreferences {
 
         // Group: Model & Generation
         const modelGroup = new Adw.PreferencesGroup({
-            title: _('Modelo de IA e Opções'),
-            description: _('Configure qual modelo do Gemini utilizar e os parâmetros de geração.'),
+            title: _('AI Model and Options'),
+            description: _('Configure which Gemini model to use and generation parameters.'),
         });
         page.add(modelGroup);
 
@@ -77,17 +77,17 @@ export default class GnomeGeminiPreferences extends ExtensionPreferences {
         models.forEach(m => stringList.append(m));
 
         const sequenceTitles = [
-            _('Modelo Primário'),
-            _('Modelo Secundário (Fallback 1)'),
-            _('Modelo Terciário (Fallback 2)'),
-            _('Modelo Quaternário (Fallback 3)'),
-            _('Modelo Quinário (Fallback 4)')
+            _('Primary Model'),
+            _('Secondary Model (Fallback 1)'),
+            _('Tertiary Model (Fallback 2)'),
+            _('Quaternary Model (Fallback 3)'),
+            _('Quinary Model (Fallback 4)')
         ];
 
         sequenceTitles.forEach((title, i) => {
             const row = new Adw.ComboRow({
                 title: title,
-                subtitle: i === 0 ? _('Modelo principal utilizado para geração.') : _('Usado automaticamente caso os anteriores atinjam o limite (rate limit)'),
+                subtitle: i === 0 ? _('Primary model used for generation.') : _('Used automatically if the previous ones hit the rate limit'),
                 model: stringList,
             });
 
@@ -115,8 +115,8 @@ export default class GnomeGeminiPreferences extends ExtensionPreferences {
 
         // Temperature Row
         const tempRow = new Adw.SpinRow({
-            title: _('Temperatura'),
-            subtitle: _('Controla a criatividade da resposta (0.0 mais preciso, 2.0 mais criativo)'),
+            title: _('Temperature'),
+            subtitle: _('Controls response creativity (0.0 more precise, 2.0 more creative)'),
             adjustment: new Gtk.Adjustment({
                 lower: 0.0,
                 upper: 2.0,
@@ -133,8 +133,8 @@ export default class GnomeGeminiPreferences extends ExtensionPreferences {
 
         // Remember History Switch
         const historyRow = new Adw.SwitchRow({
-            title: _('Manter Histórico da Conversa'),
-            subtitle: _('Preserva as mensagens anteriores para manter o contexto durante o chat'),
+            title: _('Keep Conversation History'),
+            subtitle: _('Preserves previous messages to keep context during chat'),
             active: settings.get_boolean('remember-history'),
         });
         historyRow.connect('notify::active', (row) => {
@@ -144,7 +144,7 @@ export default class GnomeGeminiPreferences extends ExtensionPreferences {
 
         // System Instruction Row
         const systemPromptRow = new Adw.EntryRow({
-            title: _('Instrução do Sistema (Personalidade)'),
+            title: _('System Instruction (Personality)'),
             text: settings.get_string('system-instruction'),
         });
         systemPromptRow.connect('changed', (row) => {
@@ -155,7 +155,7 @@ export default class GnomeGeminiPreferences extends ExtensionPreferences {
         // Detected System Info Row
         const sysInfo = getSystemInfo();
         const sysInfoRow = new Adw.ActionRow({
-            title: _('Ambiente Detectado do Sistema'),
+            title: _('Detected System Environment'),
             subtitle: `${sysInfo.distro} • Kernel ${sysInfo.kernel} • GNOME ${sysInfo.gnomeVersion}`,
         });
         sysInfoRow.add_prefix(new Gtk.Image({
@@ -165,23 +165,23 @@ export default class GnomeGeminiPreferences extends ExtensionPreferences {
 
         // Group: Appearance & Shortcuts
         const appearanceGroup = new Adw.PreferencesGroup({
-            title: _('Aparência e Atalhos'),
-            description: _('Configure a posição de abertura do popup e atalhos de teclado.'),
+            title: _('Appearance and Shortcuts'),
+            description: _('Configure popup opening position and keyboard shortcuts.'),
         });
         page.add(appearanceGroup);
 
         // Popup Position Row
         const positionOptions = [
-            { id: 'corner', title: _('Canto da barra superior (Padrão)') },
-            { id: 'center', title: _('Centro da tela (0.8 × tamanho do display)') },
+            { id: 'corner', title: _('Top bar corner (Default)') },
+            { id: 'center', title: _('Screen center (0.8 × display size)') },
         ];
 
         const posStringList = new Gtk.StringList();
         positionOptions.forEach(opt => posStringList.append(opt.title));
 
         const positionRow = new Adw.ComboRow({
-            title: _('Posição de Abertura'),
-            subtitle: _('Escolha entre abrir no canto superior ou centralizado ocupando 80% da tela'),
+            title: _('Opening Position'),
+            subtitle: _('Choose between opening in the top corner or centered occupying 80% of the screen'),
             model: posStringList,
         });
 
@@ -201,8 +201,8 @@ export default class GnomeGeminiPreferences extends ExtensionPreferences {
 
         // Keyboard Shortcut Row
         const shortcutRow = new Adw.ActionRow({
-            title: _('Atalho de Teclado'),
-            subtitle: _('Atalho para abrir ou fechar o Gemini rapidamente. Clique em Alterar e pressione as teclas (Backspace para desativar).'),
+            title: _('Keyboard Shortcut'),
+            subtitle: _('Shortcut to quickly open or close Gemini. Click Change and press the keys (Backspace to disable).'),
         });
 
         const shortcutBox = new Gtk.Box({
@@ -218,19 +218,19 @@ export default class GnomeGeminiPreferences extends ExtensionPreferences {
 
         const shortcutLabel = new Gtk.ShortcutLabel({
             accelerator: getShortcutText(),
-            disabled_text: _('Desativado'),
+            disabled_text: _('Disabled'),
             valign: Gtk.Align.CENTER,
         });
         shortcutBox.append(shortcutLabel);
 
         const editButton = new Gtk.Button({
-            label: _('Alterar'),
+            label: _('Change'),
             valign: Gtk.Align.CENTER,
         });
 
         const resetButton = new Gtk.Button({
             icon_name: 'edit-undo-symbolic',
-            tooltip_text: _('Restaurar atalho padrão (<Control>g)'),
+            tooltip_text: _('Restore default shortcut (<Control>g)'),
             valign: Gtk.Align.CENTER,
             has_frame: false,
         });
@@ -242,13 +242,13 @@ export default class GnomeGeminiPreferences extends ExtensionPreferences {
                 window.remove_controller(keyController);
                 keyController = null;
             }
-            editButton.set_label(_('Alterar'));
+            editButton.set_label(_('Change'));
             editButton.remove_css_class('suggested-action');
             shortcutLabel.set_accelerator(getShortcutText());
         };
 
         const startEditing = () => {
-            editButton.set_label(_('Pressione as teclas...'));
+            editButton.set_label(_('Press keys...'));
             editButton.add_css_class('suggested-action');
 
             keyController = new Gtk.EventControllerKey();

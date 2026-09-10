@@ -1,0 +1,215 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: gnome-gemini\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: es\n"
+
+#: prefs.js:22
+msgid "General"
+msgstr "General"
+
+#: prefs.js:29
+msgid "API Authentication"
+msgstr "Autenticación de API"
+
+#: prefs.js:30
+#: prefs.js:35
+msgid "API Key (Gemini API Key)"
+msgstr "Clave de API (Gemini API Key)"
+
+#: prefs.js:46
+msgid "AI Model and Options"
+msgstr "Modelo de IA y Opciones"
+
+#: prefs.js:47
+msgid "Configure which Gemini model to use and generation parameters."
+msgstr "Configure qué modelo de Gemini utilizar y los parámetros de generación."
+
+#: prefs.js:80
+msgid "Primary Model"
+msgstr "Modelo Primario"
+
+#: prefs.js:81
+msgid "Secondary Model (Fallback 1)"
+msgstr "Modelo Secundario (Fallback 1)"
+
+#: prefs.js:82
+msgid "Tertiary Model (Fallback 2)"
+msgstr "Modelo Terciario (Fallback 2)"
+
+#: prefs.js:83
+msgid "Quaternary Model (Fallback 3)"
+msgstr "Modelo Cuaternario (Fallback 3)"
+
+#: prefs.js:84
+msgid "Quinary Model (Fallback 4)"
+msgstr "Modelo Quinario (Fallback 4)"
+
+#: prefs.js:90
+msgid "Primary model used for generation."
+msgstr "Modelo principal utilizado para la generación."
+
+#: prefs.js:90
+msgid "Used automatically if the previous ones hit the rate limit"
+msgstr "Usado automáticamente si los anteriores alcanzan el límite de peticiones"
+
+#: prefs.js:118
+msgid "Temperature"
+msgstr "Temperatura"
+
+#: prefs.js:119
+msgid "Controls response creativity (0.0 more precise, 2.0 more creative)"
+msgstr "Controla la creatividad de la respuesta (0.0 más preciso, 2.0 más creativo)"
+
+#: prefs.js:136
+msgid "Keep Conversation History"
+msgstr "Mantener Historial de Conversación"
+
+#: prefs.js:137
+msgid "Preserves previous messages to keep context during chat"
+msgstr "Conserva los mensajes anteriores para mantener el contexto durante el chat"
+
+#: prefs.js:147
+msgid "System Instruction (Personality)"
+msgstr "Instrucción del Sistema (Personalidad)"
+
+#: prefs.js:158
+msgid "Detected System Environment"
+msgstr "Entorno del Sistema Detectado"
+
+#: prefs.js:168
+msgid "Appearance and Shortcuts"
+msgstr "Apariencia y Atajos"
+
+#: prefs.js:169
+msgid "Configure popup opening position and keyboard shortcuts."
+msgstr "Configure la posición de apertura de la ventana emergente y los atajos de teclado."
+
+#: prefs.js:175
+msgid "Top bar corner (Default)"
+msgstr "Esquina de la barra superior (Predeterminado)"
+
+#: prefs.js:176
+msgid "Screen center (0.8 × display size)"
+msgstr "Centro de la pantalla (0.8 × tamaño de la pantalla)"
+
+#: prefs.js:183
+msgid "Opening Position"
+msgstr "Posición de Apertura"
+
+#: prefs.js:184
+#: prefs.js:204
+msgid "Keyboard Shortcut"
+msgstr "Atajo de Teclado"
+
+#: prefs.js:205
+#: prefs.js:221
+msgid "Disabled"
+msgstr "Deshabilitado"
+
+#: prefs.js:227 prefs.js:245
+msgid "Change"
+msgstr "Cambiar"
+
+#: prefs.js:233
+msgid "Restore default shortcut (<Control>g)"
+msgstr "Restaurar atajo predeterminado (<Control>g)"
+
+#: prefs.js:251
+msgid "Press keys..."
+msgstr "Presione las teclas..."
+
+#: extension.js:157
+msgid "Gemini"
+msgstr "Gemini"
+
+#: extension.js:389
+msgid "Ask Gemini something... (Enter to send)"
+msgstr "Pregunte algo a Gemini... (Enter para enviar)"
+
+#: extension.js:606
+msgid "How can I help today?"
+msgstr "¿Cómo puedo ayudar hoy?"
+
+#: extension.js:613
+msgid "Ask about code, ideas, summaries, or system commands."
+msgstr "Pregunte sobre código, ideas, resúmenes o comandos del sistema."
+
+#: extension.js:628
+msgid "💡 Explain what GNOME Shell is"
+msgstr "💡 Explique qué es GNOME Shell"
+
+#: extension.js:629
+msgid "🐧 Bash command to monitor memory usage"
+msgstr "🐧 Comando bash para monitorear uso de memoria"
+
+#: extension.js:630
+msgid "✍️ Write a Python script to rename files"
+msgstr "✍️ Escriba un script en Python para renombrar archivos"
+
+#: extension.js:837
+msgid "No saved sessions"
+msgstr "Sin sesiones guardadas"
+
+#: extension.js:947
+msgid "Suggested command"
+msgstr "Comando sugerido"
+
+#: extension.js:982 extension.js:996 extension.js:1288 extension.js:1297
+msgid "Copy"
+msgstr "Copiar"
+
+#: extension.js:992 extension.js:1188 extension.js:1294
+msgid "✓ Copied!"
+msgstr "✓ ¡Copiado!"
+
+#: extension.js:1018
+msgid "Execute"
+msgstr "Ejecutar"
+
+#: extension.js:1075
+msgid "Executing..."
+msgstr "Ejecutando..."
+
+#: extension.js:1095
+msgid "Executing command in background..."
+msgstr "Ejecutando comando en segundo plano..."
+
+#: extension.js:1106
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: extension.js:1130
+msgid "Run again"
+msgstr "Ejecutar de nuevo"
+
+#: extension.js:1155
+msgid "Execution cancelled by user."
+msgstr "Ejecución cancelada por el usuario."
+
+#: extension.js:1181 extension.js:1191
+msgid "Copy output"
+msgstr "Copiar salida"
+
+#: extension.js:1238
+msgid "(Command executed with no output)"
+msgstr "(Comando ejecutado sin salida)"
+
+#: extension.js:1350
+msgid "Gemini is thinking..."
+msgstr "Gemini está pensando..."
+
+#: extension.js:1369 extension.js:1434 extension.js:1527
+msgid "Configure API Key"
+msgstr "Configurar Clave API"
+
+#: extension.js:1434
+msgid "Gemini API key is not configured."
+msgstr "La clave de API de Gemini no está configurada."
+
+#: extension.js:1529
+msgid "Change Model in Preferences"
+msgstr "Cambiar Modelo en Preferencias"
+

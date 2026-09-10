@@ -1,6 +1,6 @@
 {
   "name": "Gnome Gemini",
-  "description": "Gemini AI assistant integration for GNOME Shell",
+  "description": "Gemini AI assistant integration for GNOME Shell (allows copying responses and code to clipboard)",
   "uuid": "gnome-gemini@dfnasc",
   "settings-schema": "org.gnome.shell.extensions.gnome-gemini",
   "shell-version": [

@@ -38,6 +38,7 @@ class GeminiCenterDialog extends ModalDialog.ModalDialog {
 
         this._indicator = indicator;
         this._chatWidget = null;
+        this._activeTimeouts = new Set();
 
         // Hide default button box since we use custom controls in the chat UI
         this.dialogLayout.buttonLayout.hide();
@@ -121,10 +122,12 @@ class GeminiCenterDialog extends ModalDialog.ModalDialog {
         this._updateSize();
         const opened = super.open();
         if (opened) {
-            GLib.timeout_add(GLib.PRIORITY_DEFAULT, 60, () => {
+            const tId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 60, () => {
+                this._activeTimeouts.delete(tId);
                 this._indicator?.focusInput();
                 return GLib.SOURCE_REMOVE;
             });
+            this._activeTimeouts.add(tId);
         }
         return opened;
     }
@@ -142,6 +145,10 @@ class GeminiCenterDialog extends ModalDialog.ModalDialog {
     }
 
     destroy() {
+        if (this._activeTimeouts) {
+            for (const id of this._activeTimeouts) GLib.source_remove(id);
+            this._activeTimeouts.clear();
+        }
         if (this._monitorsChangedId) {
             Main.layoutManager.disconnect(this._monitorsChangedId);
             this._monitorsChangedId = 0;
@@ -164,6 +171,7 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
         this._isLoading = false;
         this._isDestroyed = false;
         this._activeCommandCancellables = new Set();
+        this._activeTimeouts = new Set();
         this._requestTimestamps = [];
 
         // Top bar indicator layout
@@ -418,10 +426,12 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
         // Focus input when popup opens
         this.menu.connect('open-state-changed', (_menu, isOpen) => {
             if (isOpen) {
-                GLib.timeout_add(GLib.PRIORITY_DEFAULT, 60, () => {
+                const tId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 60, () => {
+                    this._activeTimeouts.delete(tId);
                     this.focusInput();
                     return GLib.SOURCE_REMOVE;
                 });
+                this._activeTimeouts.add(tId);
             }
         });
 
@@ -719,7 +729,8 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
         if (this._isDestroyed)
             return;
 
-        GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => {
+        const tId = GLib.idle_add(GLib.PRIORITY_DEFAULT_IDLE, () => {
+            this._activeTimeouts.delete(tId);
             if (this._isDestroyed || !this._scrollView)
                 return GLib.SOURCE_REMOVE;
             try {
@@ -730,6 +741,7 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
             } catch (_) {}
             return GLib.SOURCE_REMOVE;
         });
+        this._activeTimeouts.add(tId);
     }
 
     _clearChat() {
@@ -991,13 +1003,15 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
             clipboard.set_text(St.ClipboardType.CLIPBOARD, segment.command);
             copyLabel.text = _('✓ Copied!');
             copyIcon.icon_name = 'emblem-ok-symbolic';
-            GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, 2, () => {
+            const tId = GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, 2, () => {
+                this._activeTimeouts.delete(tId);
                 if (!this._isDestroyed) {
                     copyLabel.text = _('Copy');
                     copyIcon.icon_name = 'edit-copy-symbolic';
                 }
                 return GLib.SOURCE_REMOVE;
             });
+            this._activeTimeouts.add(tId);
         });
         buttonsBox.add_child(copyBtn);
 
@@ -1186,12 +1200,14 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
                     const clipboard = St.Clipboard.get_default();
                     clipboard.set_text(St.ClipboardType.CLIPBOARD, fullOut);
                     copyOutBtn.label = _('✓ Copied!');
-                    GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, 2, () => {
+                    const tId = GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, 2, () => {
+                        this._activeTimeouts.delete(tId);
                         if (!this._isDestroyed) {
                             copyOutBtn.label = _('Copy output');
                         }
                         return GLib.SOURCE_REMOVE;
                     });
+                    this._activeTimeouts.add(tId);
                 });
                 statusRow.add_child(copyOutBtn);
             }
@@ -1292,12 +1308,14 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
             const clipboard = St.Clipboard.get_default();
             clipboard.set_text(St.ClipboardType.CLIPBOARD, markdownText);
             copyBtn.label = _('✓ Copied!');
-            GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, 2, () => {
+            const tId = GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, 2, () => {
+                this._activeTimeouts.delete(tId);
                 if (!this._isDestroyed) {
                     copyBtn.label = _('Copy');
                 }
                 return GLib.SOURCE_REMOVE;
             });
+            this._activeTimeouts.add(tId);
         });
         header.add_child(copyBtn);
 
@@ -1560,6 +1578,14 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
         if (this._settingsChangedId) {
             this._settings.disconnect(this._settingsChangedId);
             this._settingsChangedId = null;
+        }
+        if (this._settingsChangedSeqId) {
+            this._settings.disconnect(this._settingsChangedSeqId);
+            this._settingsChangedSeqId = null;
+        }
+        if (this._activeTimeouts) {
+            for (const id of this._activeTimeouts) GLib.source_remove(id);
+            this._activeTimeouts.clear();
         }
         if (this._apiClient) {
             this._apiClient.cancelCurrentRequest();

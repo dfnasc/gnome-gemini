@@ -249,12 +249,37 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
         });
         headerBox.add_child(titleLabel);
 
+        this._modelSelector = new St.BoxLayout({
+            vertical: false,
+            style_class: 'gemini-model-selector',
+            y_align: Clutter.ActorAlign.CENTER,
+            style: 'margin-left: 12px; background: rgba(0,0,0,0.1); border-radius: 4px;'
+        });
+
+        const prevModelBtn = new St.Button({
+            child: new St.Icon({ icon_name: 'go-previous-symbolic', icon_size: 14 }),
+            style_class: 'gemini-icon-button',
+            can_focus: true,
+        });
+        prevModelBtn.connect('clicked', () => this._cycleModel(-1));
+
         this._modelBadge = new St.Label({
             text: this._settings.get_string('model') || 'gemini-3.8-flash',
             style_class: 'gemini-model-badge',
             y_align: Clutter.ActorAlign.CENTER,
         });
-        headerBox.add_child(this._modelBadge);
+
+        const nextModelBtn = new St.Button({
+            child: new St.Icon({ icon_name: 'go-next-symbolic', icon_size: 14 }),
+            style_class: 'gemini-icon-button',
+            can_focus: true,
+        });
+        nextModelBtn.connect('clicked', () => this._cycleModel(1));
+
+        this._modelSelector.add_child(prevModelBtn);
+        this._modelSelector.add_child(this._modelBadge);
+        this._modelSelector.add_child(nextModelBtn);
+        headerBox.add_child(this._modelSelector);
 
         const spacer = new St.Widget({
             x_expand: true,
@@ -357,62 +382,15 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
         this._chatContainer.add_child(inputRow);
 
         this._rateLimitsBox = new St.BoxLayout({
+            vertical: true,
             style_class: 'gemini-rate-limits-box',
-            vertical: false,
             x_expand: true,
             y_align: Clutter.ActorAlign.END,
+            style: 'padding-top: 8px;'
         });
 
-        this._tokensLabel = new St.Label({
-            text: 'Tokens: 0 / 1M',
-            style_class: 'gemini-rate-label',
-            y_align: Clutter.ActorAlign.CENTER,
-        });
-
-        this._tokensProgressBg = new St.BoxLayout({
-            style_class: 'gemini-rate-progress-bg',
-            x_expand: true,
-            y_align: Clutter.ActorAlign.CENTER,
-        });
-
-        this._tokensProgressBar = new St.BoxLayout({
-            style_class: 'gemini-rate-progress-bar',
-        });
-        
-        // Use set_width on the progress bar later. Initially 0%
-        this._tokensProgressBar.set_width(0);
-
-        this._tokensProgressBg.add_child(this._tokensProgressBar);
-
-        this._rateLimitsBox.add_child(this._tokensLabel);
-        this._rateLimitsBox.add_child(this._tokensProgressBg);
-
-        
-        // Add RPM bar
-        this._requestsLabel = new St.Label({
-            text: 'Requests (min): 0 / 15',
-            style_class: 'gemini-rate-label',
-            y_align: Clutter.ActorAlign.CENTER,
-            style: 'margin-left: 12px;'
-        });
-
-        this._requestsProgressBg = new St.BoxLayout({
-            style_class: 'gemini-rate-progress-bg',
-            x_expand: true,
-            y_align: Clutter.ActorAlign.CENTER,
-        });
-
-        this._requestsProgressBar = new St.BoxLayout({
-            style_class: 'gemini-rate-progress-bar',
-        });
-        this._requestsProgressBar.set_width(0);
-        this._requestsProgressBg.add_child(this._requestsProgressBar);
-
-        this._rateLimitsBox.add_child(this._requestsLabel);
-        this._rateLimitsBox.add_child(this._requestsProgressBg);
-        
+        this._refreshRateLimitsBox();
         this._chatContainer.add_child(this._rateLimitsBox);
-
 
         this._menuItem.add_child(this._chatContainer);
         this.menu.addMenuItem(this._menuItem);
@@ -429,6 +407,19 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
 
         // Show welcome view initially
         this._showWelcomeView();
+    }
+
+    _cycleModel(dir) {
+        let seq = this._settings.get_strv('models-sequence');
+        if (!seq || seq.length === 0) seq = [this._settings.get_string('model') || 'gemini-3.8-flash'];
+        seq = seq.filter(m => m && m.trim().length > 0);
+        
+        const current = this._settings.get_string('model') || 'gemini-3.8-flash';
+        let idx = seq.indexOf(current);
+        if (idx === -1) idx = 0;
+        
+        idx = (idx + dir + seq.length) % seq.length;
+        this._settings.set_string('model', seq[idx]);
     }
 
     _updatePopupPlacement() {
@@ -602,18 +593,42 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
     }
 
     _updateRateLimitsUI(usageMetadata) {
+        const currentModel = this._settings.get_string('model') || 'gemini-3.8-flash';
         const now = Date.now();
-        this._requestTimestamps.push(now);
-        this._requestTimestamps = this._requestTimestamps.filter(t => now - t < 60000);
         
-        const reqCount = this._requestTimestamps.length;
-        const reqLimit = 15;
-        const reqPercentage = Math.min(100, Math.max(0, (reqCount / reqLimit) * 100));
-        this._requestsLabel.set_text(`Req/min: ${reqCount} / ${reqLimit}`);
-        this._requestsProgressBar.set_style(`width: ${Math.max(1, Math.round(reqPercentage))}px;`);
-
+        if (!this._modelTimestamps) this._modelTimestamps = {};
+        if (!this._modelTimestamps[currentModel]) this._modelTimestamps[currentModel] = [];
+        this._modelTimestamps[currentModel].push(now);
+        this._modelTimestamps[currentModel] = this._modelTimestamps[currentModel].filter(t => now - t < 60000);
+        
+        if (!this._modelTokens) this._modelTokens = {};
         if (usageMetadata) {
-            const total = usageMetadata.totalTokenCount || 0;
+            this._modelTokens[currentModel] = usageMetadata.totalTokenCount || 0;
+        }
+
+        this._refreshRateLimitsBox();
+    }
+
+    _refreshRateLimitsBox() {
+        if (!this._rateLimitsBox || this._isDestroyed) return;
+        this._rateLimitsBox.remove_all_children();
+        
+        let seq = this._settings.get_strv('models-sequence');
+        if (!seq || seq.length === 0) seq = [this._settings.get_string('model') || 'gemini-3.8-flash'];
+        seq = seq.filter(m => m && m.trim().length > 0);
+        
+        const now = Date.now();
+        if (!this._modelTimestamps) this._modelTimestamps = {};
+        if (!this._modelTokens) this._modelTokens = {};
+
+        seq.forEach((model, i) => {
+            const timestamps = this._modelTimestamps[model] || [];
+            this._modelTimestamps[model] = timestamps.filter(t => now - t < 60000);
+            const reqCount = this._modelTimestamps[model].length;
+            const reqLimit = 15;
+            const reqPercentage = Math.min(100, Math.max(0, (reqCount / reqLimit) * 100));
+            
+            const total = this._modelTokens[model] || 0;
             const limit = 1000000;
             const percentage = Math.min(100, Math.max(0, (total / limit) * 100));
             
@@ -623,10 +638,41 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
             } else if (total >= 1000) {
                 formattedTotal = (total / 1000).toFixed(1) + 'k';
             }
+
+            const row = new St.BoxLayout({ vertical: false, x_expand: true, style: 'margin-bottom: 2px;' });
             
-            this._tokensLabel.set_text(`Tokens: ${formattedTotal} / 1M`);
-            this._tokensProgressBar.set_style(`width: ${Math.max(1, Math.round(percentage))}px;`);
-        }
+            const nameLabel = new St.Label({
+                text: `${i+1}. ${model.replace('gemini-', '')}`,
+                style_class: 'gemini-rate-label',
+                style: 'width: 100px;',
+                y_align: Clutter.ActorAlign.CENTER,
+            });
+            row.add_child(nameLabel);
+            
+            // Tokens
+            const tokensProgressBg = new St.BoxLayout({ style_class: 'gemini-rate-progress-bg', x_expand: true, y_align: Clutter.ActorAlign.CENTER, style: 'margin-right: 8px;' });
+            const tokensProgressBar = new St.BoxLayout({ style_class: 'gemini-rate-progress-bar' });
+            tokensProgressBar.set_style(`width: ${Math.max(1, Math.round(percentage))}px;`);
+            tokensProgressBg.add_child(tokensProgressBar);
+            row.add_child(tokensProgressBg);
+            
+            // Requests
+            const reqLabel = new St.Label({
+                text: `${reqCount}/15`,
+                style_class: 'gemini-rate-label',
+                style: 'margin-right: 4px; font-size: 9px;',
+                y_align: Clutter.ActorAlign.CENTER,
+            });
+            row.add_child(reqLabel);
+            
+            const reqProgressBg = new St.BoxLayout({ style_class: 'gemini-rate-progress-bg', style: 'width: 50px;', y_align: Clutter.ActorAlign.CENTER });
+            const reqProgressBar = new St.BoxLayout({ style_class: 'gemini-rate-progress-bar' });
+            reqProgressBar.set_style(`width: ${Math.max(1, Math.round(reqPercentage * 0.5))}px;`);
+            reqProgressBg.add_child(reqProgressBar);
+            row.add_child(reqProgressBg);
+            
+            this._rateLimitsBox.add_child(row);
+        });
     }
 
     _scrollToBottom() {
@@ -1293,10 +1339,30 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
             this._hideLoadingIndicator();
             const msg = error.message || '';
             const isApiKeyError = msg.toLowerCase().includes('chave') || msg.toLowerCase().includes('api key');
-            const isModelOrServiceError = msg.includes('503') ||
+            const isModelOrServiceError = msg.includes('503') || msg.includes('429') ||
                                           msg.toLowerCase().includes('sobrecarregado') ||
-                                          msg.includes('404') ||
-                                          msg.toLowerCase().includes('modelo');
+                                          msg.toLowerCase().includes('rate limit') ||
+                                          msg.includes('404');
+
+            if (isModelOrServiceError && !msg.includes('404')) {
+                let seq = this._settings.get_strv('models-sequence');
+                if (!seq || seq.length === 0) seq = [this._settings.get_string('model') || 'gemini-3.8-flash'];
+                seq = seq.filter(m => m && m.trim().length > 0);
+                
+                const current = this._settings.get_string('model');
+                let idx = seq.indexOf(current);
+                if (idx >= 0 && idx < seq.length - 1) {
+                    const nextModel = seq[idx + 1];
+                    this._settings.set_string('model', nextModel);
+                    
+                    this._addErrorBubble(`O modelo ${current} atingiu o limite ou está sobrecarregado. Trocando automaticamente para ${nextModel}...`, false);
+                    
+                    this._isLoading = false;
+                    this._sendButton.reactive = true;
+                    this._handleSend(userMsgObj.text, userMsgObj.wrapper, null);
+                    return;
+                }
+            }
 
             let errBubble = null;
             if (isApiKeyError) {

@@ -62,32 +62,56 @@ export default class GnomeGeminiPreferences extends ExtensionPreferences {
             'gemini-2.5-flash-lite',
         ];
 
-        const currentModel = settings.get_string('model');
-        if (currentModel && !models.includes(currentModel)) {
-            models.push(currentModel);
+        let currentSequence = settings.get_strv('models-sequence');
+        if (!currentSequence || currentSequence.length === 0) {
+            currentSequence = ["gemini-3.8-flash", "gemini-3.7-flash", "gemini-3.5-flash", "gemini-2.5-flash", "gemini-2.5-flash-lite"];
         }
+        
+        currentSequence.forEach(m => {
+            if (m && !models.includes(m)) {
+                models.push(m);
+            }
+        });
 
         const stringList = new Gtk.StringList();
         models.forEach(m => stringList.append(m));
 
-        const modelRow = new Adw.ComboRow({
-            title: _('Modelo Gemini'),
-            subtitle: _('gemini-3.8-flash (recomendado). Caso obtenha erro 503/sobrecarga, utilize gemini-2.5-flash'),
-            model: stringList,
-        });
+        const sequenceTitles = [
+            _('Modelo Primário'),
+            _('Modelo Secundário (Fallback 1)'),
+            _('Modelo Terciário (Fallback 2)'),
+            _('Modelo Quaternário (Fallback 3)'),
+            _('Modelo Quinário (Fallback 4)')
+        ];
 
-        const selectedIndex = models.indexOf(currentModel);
-        if (selectedIndex >= 0) {
-            modelRow.set_selected(selectedIndex);
-        }
+        sequenceTitles.forEach((title, i) => {
+            const row = new Adw.ComboRow({
+                title: title,
+                subtitle: i === 0 ? _('Modelo principal utilizado para geração.') : _('Usado automaticamente caso os anteriores atinjam o limite (rate limit)'),
+                model: stringList,
+            });
 
-        modelRow.connect('notify::selected', (row) => {
-            const idx = row.get_selected();
-            if (idx >= 0 && idx < models.length) {
-                settings.set_string('model', models[idx]);
+            const currentModelAtIdx = currentSequence[i] || models[0];
+            const selectedIndex = models.indexOf(currentModelAtIdx);
+            if (selectedIndex >= 0) {
+                row.set_selected(selectedIndex);
             }
+
+            row.connect('notify::selected', (r) => {
+                const idx = r.get_selected();
+                if (idx >= 0 && idx < models.length) {
+                    let seq = settings.get_strv('models-sequence') || [];
+                    while (seq.length < 5) seq.push(models[0]);
+                    seq[i] = models[idx];
+                    settings.set_strv('models-sequence', seq);
+                    
+                    if (i === 0) {
+                        settings.set_string('model', models[idx]);
+                    }
+                }
+            });
+            modelGroup.add(row);
         });
-        modelGroup.add(modelRow);
 
         // Temperature Row
         const tempRow = new Adw.SpinRow({

@@ -4,3 +4,4 @@ schemas/gschemas.compiled
 .idea/
 *~
 *.swp
+.agent/

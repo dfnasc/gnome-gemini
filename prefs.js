@@ -230,7 +230,7 @@ export default class GnomeGeminiPreferences extends ExtensionPreferences {
 
         const resetButton = new Gtk.Button({
             icon_name: 'edit-undo-symbolic',
-            tooltip_text: _('Restaurar atalho padrão (<Alt>g)'),
+            tooltip_text: _('Restaurar atalho padrão (<Control>g)'),
             valign: Gtk.Align.CENTER,
             has_frame: false,
         });
@@ -297,8 +297,8 @@ export default class GnomeGeminiPreferences extends ExtensionPreferences {
             if (keyController) {
                 stopEditing();
             }
-            settings.set_strv('toggle-shortcut', ['<Alt>g']);
-            shortcutLabel.set_accelerator('<Alt>g');
+            settings.set_strv('toggle-shortcut', ['<Control>g']);
+            shortcutLabel.set_accelerator('<Control>g');
         });
 
         window.connect('close-request', () => {

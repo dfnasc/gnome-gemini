@@ -41,7 +41,7 @@
       <description>Where the Gemini popup opens: 'corner' for the top panel menu or 'center' for a centered modal dialog (80% display size).</description>
     </key>
     <key name="toggle-shortcut" type="as">
-      <default><![CDATA[['<Alt>g']]]></default>
+      <default><![CDATA[['<Control>g']]]></default>
       <summary>Toggle Gemini Shortcut</summary>
       <description>Keyboard shortcut to open and close the Gemini popup.</description>
     </key>

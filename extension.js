@@ -94,10 +94,10 @@ class GeminiCenterDialog extends ModalDialog.ModalDialog {
             return Clutter.EVENT_STOP;
         }
 
-        // Close on Alt+G if pressed while dialog is focused
+        // Close on Control+G if pressed while dialog is focused
         const state = event.get_state();
-        const isAlt = (state & Clutter.ModifierType.MOD1_MASK) || (state & Clutter.ModifierType.ALT_MASK);
-        if (isAlt && (symbol === Clutter.KEY_g || symbol === Clutter.KEY_G)) {
+        const isControl = (state & Clutter.ModifierType.CONTROL_MASK);
+        if (isControl && (symbol === Clutter.KEY_g || symbol === Clutter.KEY_G)) {
             this.close();
             return Clutter.EVENT_STOP;
         }

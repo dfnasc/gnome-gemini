@@ -154,7 +154,7 @@ class GeminiCenterDialog extends ModalDialog.ModalDialog {
 const GnomeGeminiIndicator = GObject.registerClass(
 class GnomeGeminiIndicator extends PanelMenu.Button {
     _init(extension) {
-        super._init(0.0, _('Gnome Gemini'));
+        super._init(0.0, _('Gemini'));
 
         this._extension = extension;
         this._settings = extension.getSettings();
@@ -175,12 +175,12 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
         });
         topHbox.add_child(icon);
 
-        const label = new St.Label({
+        this._topLabel = new St.Label({
             text: 'Gemini',
             y_align: Clutter.ActorAlign.CENTER,
             style: 'font-weight: bold; margin-left: 4px;',
         });
-        topHbox.add_child(label);
+        topHbox.add_child(this._topLabel);
 
         this.add_child(topHbox);
 
@@ -206,7 +206,7 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
 
         // Listen for settings changes
         this._settingsChangedId = this._settings.connect('changed::model', () => {
-            this._updateModelBadge();
+            this._updateModelDropdown();
         });
 
         this._positionChangedId = this._settings.connect('changed::popup-position', () => {
@@ -243,43 +243,45 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
         });
 
         const titleLabel = new St.Label({
-            text: 'Gnome Gemini',
+            text: 'Gemini',
             style_class: 'gemini-title-label',
             y_align: Clutter.ActorAlign.CENTER,
         });
         headerBox.add_child(titleLabel);
 
-        this._modelSelector = new St.BoxLayout({
-            vertical: false,
-            style_class: 'gemini-model-selector',
-            y_align: Clutter.ActorAlign.CENTER,
-            style: 'margin-left: 12px; background: rgba(0,0,0,0.1); border-radius: 4px;'
+        this._modelIcon = new St.Icon({
+            icon_name: 'cpu-symbolic',
+            icon_size: 16,
         });
-
-        const prevModelBtn = new St.Button({
-            child: new St.Icon({ icon_name: 'go-previous-symbolic', icon_size: 14 }),
-            style_class: 'gemini-icon-button',
-            can_focus: true,
-        });
-        prevModelBtn.connect('clicked', () => this._cycleModel(-1));
-
-        this._modelBadge = new St.Label({
+        
+        this._modelNameLabel = new St.Label({
             text: this._settings.get_string('model') || 'gemini-3.8-flash',
-            style_class: 'gemini-model-badge',
+            y_align: Clutter.ActorAlign.CENTER,
+            style: 'margin-left: 6px;',
+        });
+        
+        const modelButtonBox = new St.BoxLayout({
+            vertical: false,
             y_align: Clutter.ActorAlign.CENTER,
         });
+        modelButtonBox.add_child(this._modelIcon);
+        modelButtonBox.add_child(this._modelNameLabel);
 
-        const nextModelBtn = new St.Button({
-            child: new St.Icon({ icon_name: 'go-next-symbolic', icon_size: 14 }),
+        this._modelComboButton = new St.Button({
             style_class: 'gemini-icon-button',
+            child: modelButtonBox,
             can_focus: true,
         });
-        nextModelBtn.connect('clicked', () => this._cycleModel(1));
+        this._modelMenu = new PopupMenu.PopupMenu(this._modelComboButton, 0.5, St.Side.TOP);
+        Main.uiGroup.add_child(this._modelMenu.actor);
+        this._modelMenu.actor.hide();
+        this._modelMenuManager = new PopupMenu.PopupMenuManager(this._modelComboButton);
+        this._modelMenuManager.addMenu(this._modelMenu);
 
-        this._modelSelector.add_child(prevModelBtn);
-        this._modelSelector.add_child(this._modelBadge);
-        this._modelSelector.add_child(nextModelBtn);
-        headerBox.add_child(this._modelSelector);
+        this._modelComboButton.connect('clicked', () => {
+            this._modelMenu.toggle();
+        });        
+        headerBox.add_child(this._modelComboButton);
 
         const spacer = new St.Widget({
             x_expand: true,
@@ -330,6 +332,9 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
         headerBox.add_child(closeBtn);
 
         this._chatContainer.add_child(headerBox);
+        
+        this._updateModelDropdown();
+        this._settingsChangedSeqId = this._settings.connect('changed::models-sequence', () => this._updateModelDropdown());
 
         // 2. Chat Scroll View & Messages Box
         this._scrollView = new St.ScrollView({
@@ -381,16 +386,7 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
 
         this._chatContainer.add_child(inputRow);
 
-        this._rateLimitsBox = new St.BoxLayout({
-            vertical: true,
-            style_class: 'gemini-rate-limits-box',
-            x_expand: true,
-            y_align: Clutter.ActorAlign.END,
-            style: 'padding-top: 8px;'
-        });
-
         this._refreshRateLimitsBox();
-        this._chatContainer.add_child(this._rateLimitsBox);
 
         this._menuItem.add_child(this._chatContainer);
         this.menu.addMenuItem(this._menuItem);
@@ -409,17 +405,59 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
         this._showWelcomeView();
     }
 
-    _cycleModel(dir) {
+    _updateModelDropdown() {
+        if (!this._modelMenu || this._isDestroyed) return;
+        this._modelMenu.removeAll();
+
         let seq = this._settings.get_strv('models-sequence');
-        if (!seq || seq.length === 0) seq = [this._settings.get_string('model') || 'gemini-3.8-flash'];
+        const currentModel = this._settings.get_string('model') || 'gemini-3.8-flash';
+        if (!seq || seq.length === 0) seq = [currentModel];
         seq = seq.filter(m => m && m.trim().length > 0);
+
+        if (this._topLabel) {
+            this._topLabel.set_text(currentModel);
+        }
         
-        const current = this._settings.get_string('model') || 'gemini-3.8-flash';
-        let idx = seq.indexOf(current);
-        if (idx === -1) idx = 0;
-        
-        idx = (idx + dir + seq.length) % seq.length;
-        this._settings.set_string('model', seq[idx]);
+        if (this._modelNameLabel) {
+            this._modelNameLabel.set_text(currentModel);
+        }
+
+        seq.forEach(model => {
+            const item = new PopupMenu.PopupBaseMenuItem();
+            const box = new St.BoxLayout({ vertical: false, x_expand: true, y_align: Clutter.ActorAlign.CENTER });
+            
+            const isSelected = (model === currentModel);
+            const style = isSelected ? 'font-weight: bold; color: #4a90e2;' : '';
+            
+            const checkContainer = new St.BoxLayout({ width: 24, y_align: Clutter.ActorAlign.CENTER });
+            if (isSelected) {
+                // Add a checkmark for the selected model
+                const checkIcon = new St.Icon({
+                    icon_name: 'object-select-symbolic',
+                    icon_size: 14,
+                });
+                checkContainer.add_child(checkIcon);
+            }
+            box.add_child(checkContainer);
+            
+            const nameContainer = new St.BoxLayout({ width: 200, y_align: Clutter.ActorAlign.CENTER });
+            const nameLabel = new St.Label({ text: model, style: style, x_expand: true, y_align: Clutter.ActorAlign.CENTER });
+            nameContainer.add_child(nameLabel);
+            box.add_child(nameContainer);
+
+            const limitsWidget = this._createRateLimitsWidget(model);
+            limitsWidget.set_style('margin-left: 12px; width: 150px;');
+            box.add_child(limitsWidget);
+
+            item.add_child(box);
+
+            item.connect('activate', () => {
+                this._modelMenu.close();
+                this._settings.set_string('model', model);
+                this._refreshRateLimitsBox();
+            });
+            this._modelMenu.addMenuItem(item);
+        });
     }
 
     _updatePopupPlacement() {
@@ -523,12 +561,6 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
         }
     }
 
-    _updateModelBadge() {
-        if (this._modelBadge) {
-            this._modelBadge.text = this._settings.get_string('model') || 'gemini-3.8-flash';
-        }
-    }
-
     _showWelcomeView() {
         this._messagesBox.remove_all_children();
         this._isWelcomeState = true;
@@ -609,70 +641,54 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
         this._refreshRateLimitsBox();
     }
 
-    _refreshRateLimitsBox() {
-        if (!this._rateLimitsBox || this._isDestroyed) return;
-        this._rateLimitsBox.remove_all_children();
-        
-        let seq = this._settings.get_strv('models-sequence');
-        if (!seq || seq.length === 0) seq = [this._settings.get_string('model') || 'gemini-3.8-flash'];
-        seq = seq.filter(m => m && m.trim().length > 0);
-        
+    _createRateLimitsWidget(model) {
         const now = Date.now();
         if (!this._modelTimestamps) this._modelTimestamps = {};
         if (!this._modelTokens) this._modelTokens = {};
 
-        seq.forEach((model, i) => {
-            const timestamps = this._modelTimestamps[model] || [];
-            this._modelTimestamps[model] = timestamps.filter(t => now - t < 60000);
-            const reqCount = this._modelTimestamps[model].length;
-            const reqLimit = 15;
-            const reqPercentage = Math.min(100, Math.max(0, (reqCount / reqLimit) * 100));
-            
-            const total = this._modelTokens[model] || 0;
-            const limit = 1000000;
-            const percentage = Math.min(100, Math.max(0, (total / limit) * 100));
-            
-            let formattedTotal = total;
-            if (total >= 1000000) {
-                formattedTotal = (total / 1000000).toFixed(1) + 'M';
-            } else if (total >= 1000) {
-                formattedTotal = (total / 1000).toFixed(1) + 'k';
-            }
+        const timestamps = this._modelTimestamps[model] || [];
+        this._modelTimestamps[model] = timestamps.filter(t => now - t < 60000);
+        const reqCount = this._modelTimestamps[model].length;
+        const reqLimit = 15;
+        const reqPercentage = Math.min(100, Math.max(0, (reqCount / reqLimit) * 100));
+        const reqAvailable = Math.max(0, 100 - reqPercentage);
+        
+        const total = this._modelTokens[model] || 0;
+        const limit = 1000000;
+        const percentage = Math.min(100, Math.max(0, (total / limit) * 100));
+        const tokenAvailable = Math.max(0, 100 - percentage);
+        
+        const mainBox = new St.BoxLayout({ vertical: true, x_expand: true, y_align: Clutter.ActorAlign.CENTER });
+        
+        // Tokens
+        const tokensRow = new St.BoxLayout({ vertical: false, y_align: Clutter.ActorAlign.CENTER, style: 'margin-bottom: 2px;' });
+        const tokensProgressBg = new St.Widget({ style_class: 'gemini-rate-progress-bg', style: 'height: 12px; width: 60px;' });
+        tokensProgressBg.layout_manager = new Clutter.BinLayout();
+        const tokensProgressBar = new St.Widget({ style_class: 'gemini-rate-progress-bar', style: `width: ${Math.max(1, Math.round((tokenAvailable / 100) * 60))}px; height: 12px;`, x_align: Clutter.ActorAlign.START, y_align: Clutter.ActorAlign.FILL });
+        tokensProgressBg.add_child(tokensProgressBar);
+        tokensRow.add_child(tokensProgressBg);
+        
+        const tokensLabel = new St.Label({ text: `${Math.round(tokenAvailable)}%`, style: 'font-size: 10px; margin-left: 4px;' });
+        tokensRow.add_child(tokensLabel);
+        mainBox.add_child(tokensRow);
+        
+        // Requests
+        const reqRow = new St.BoxLayout({ vertical: false, y_align: Clutter.ActorAlign.CENTER });
+        const reqProgressBg = new St.Widget({ style_class: 'gemini-rate-progress-bg', style: 'height: 12px; width: 60px;' });
+        reqProgressBg.layout_manager = new Clutter.BinLayout();
+        const reqProgressBar = new St.Widget({ style_class: 'gemini-rate-progress-bar', style: `width: ${Math.max(1, Math.round((reqAvailable / 100) * 60))}px; height: 12px;`, x_align: Clutter.ActorAlign.START, y_align: Clutter.ActorAlign.FILL });
+        reqProgressBg.add_child(reqProgressBar);
+        reqRow.add_child(reqProgressBg);
+        
+        const reqLabel = new St.Label({ text: `${Math.round(reqAvailable)}%`, style: 'font-size: 10px; margin-left: 4px;' });
+        reqRow.add_child(reqLabel);
+        mainBox.add_child(reqRow);
+        
+        return mainBox;
+    }
 
-            const row = new St.BoxLayout({ vertical: false, x_expand: true, style: 'margin-bottom: 2px;' });
-            
-            const nameLabel = new St.Label({
-                text: `${i+1}. ${model.replace('gemini-', '')}`,
-                style_class: 'gemini-rate-label',
-                style: 'width: 100px;',
-                y_align: Clutter.ActorAlign.CENTER,
-            });
-            row.add_child(nameLabel);
-            
-            // Tokens
-            const tokensProgressBg = new St.BoxLayout({ style_class: 'gemini-rate-progress-bg', x_expand: true, y_align: Clutter.ActorAlign.CENTER, style: 'margin-right: 8px;' });
-            const tokensProgressBar = new St.BoxLayout({ style_class: 'gemini-rate-progress-bar' });
-            tokensProgressBar.set_style(`width: ${Math.max(1, Math.round(percentage))}px;`);
-            tokensProgressBg.add_child(tokensProgressBar);
-            row.add_child(tokensProgressBg);
-            
-            // Requests
-            const reqLabel = new St.Label({
-                text: `${reqCount}/15`,
-                style_class: 'gemini-rate-label',
-                style: 'margin-right: 4px; font-size: 9px;',
-                y_align: Clutter.ActorAlign.CENTER,
-            });
-            row.add_child(reqLabel);
-            
-            const reqProgressBg = new St.BoxLayout({ style_class: 'gemini-rate-progress-bg', style: 'width: 50px;', y_align: Clutter.ActorAlign.CENTER });
-            const reqProgressBar = new St.BoxLayout({ style_class: 'gemini-rate-progress-bar' });
-            reqProgressBar.set_style(`width: ${Math.max(1, Math.round(reqPercentage * 0.5))}px;`);
-            reqProgressBg.add_child(reqProgressBar);
-            row.add_child(reqProgressBg);
-            
-            this._rateLimitsBox.add_child(row);
-        });
+    _refreshRateLimitsBox() {
+        this._updateModelDropdown();
     }
 
     _scrollToBottom() {
@@ -1419,6 +1435,10 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
                 this._centerDialog.close();
             this._centerDialog.destroy();
             this._centerDialog = null;
+        }
+        if (this._modelMenu) {
+            this._modelMenu.destroy();
+            this._modelMenu = null;
         }
         super.destroy();
     }

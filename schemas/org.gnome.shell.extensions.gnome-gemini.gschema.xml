@@ -7,7 +7,7 @@
       <description>Google Gemini API Key for authentication.</description>
     </key>
     <key name="model" type="s">
-      <default>"gemini-2.5-flash"</default>
+      <default>"gemini-3.8-flash"</default>
       <summary>Gemini Model</summary>
       <description>Gemini model to use for generating responses.</description>
     </key>
@@ -25,6 +25,20 @@
       <default>true</default>
       <summary>Remember Chat History</summary>
       <description>Whether to send previous messages in the current conversation to the model.</description>
+    </key>
+    <key name="popup-position" type="s">
+      <choices>
+        <choice value="corner"/>
+        <choice value="center"/>
+      </choices>
+      <default>"corner"</default>
+      <summary>Popup Position</summary>
+      <description>Where the Gemini popup opens: 'corner' for the top panel menu or 'center' for a centered modal dialog (80% display size).</description>
+    </key>
+    <key name="toggle-shortcut" type="as">
+      <default><![CDATA[['<Alt>g']]]></default>
+      <summary>Toggle Gemini Shortcut</summary>
+      <description>Keyboard shortcut to open and close the Gemini popup.</description>
     </key>
   </schema>
 </schemalist>

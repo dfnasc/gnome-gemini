@@ -9,10 +9,84 @@
 }
 
 .gemini-chat-container {
+    spacing: 10px;
+}
+
+/* Corner popup mode */
+.gemini-chat-corner {
     width: 450px;
     height: 520px;
     padding: 12px;
-    spacing: 10px;
+}
+
+.gemini-chat-corner .gemini-scroll-view {
+    height: 380px;
+}
+
+/* Center popup mode */
+.gemini-modal-dialog {
+    background-color: #242424;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 18px;
+    padding: 0;
+    box-shadow: 0 16px 36px 0 rgba(0, 0, 0, 0.55);
+}
+
+.gemini-modal-dialog .modal-dialog-content-box {
+    padding: 0;
+    margin: 0;
+    max-width: none;
+    spacing: 0;
+}
+
+.gemini-chat-center {
+    padding: 18px 24px;
+    spacing: 14px;
+}
+
+.gemini-chat-center .gemini-title-label {
+    font-size: 16px;
+}
+
+.gemini-chat-center .gemini-model-badge {
+    font-size: 11px;
+    padding: 3px 10px;
+}
+
+.gemini-chat-center .gemini-welcome-box {
+    padding: 60px 24px;
+}
+
+.gemini-chat-center .gemini-welcome-icon {
+    icon-size: 52px;
+}
+
+.gemini-chat-center .gemini-welcome-title {
+    font-size: 20px;
+}
+
+.gemini-chat-center .gemini-welcome-subtitle {
+    font-size: 14px;
+}
+
+.gemini-chat-center .gemini-suggestion-chip {
+    padding: 8px 16px;
+    font-size: 13px;
+    margin: 4px;
+}
+
+.gemini-chat-center .gemini-text-label {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.gemini-chat-center .gemini-input-entry {
+    font-size: 14px;
+    padding: 8px 12px;
+}
+
+.gemini-chat-center .gemini-send-button {
+    padding: 8px 18px;
 }
 
 /* Header */
@@ -56,7 +130,6 @@
 
 /* Scroll & Messages */
 .gemini-scroll-view {
-    height: 380px;
     padding-right: 4px;
 }
 
@@ -236,4 +309,222 @@
 .gemini-send-button:disabled {
     background-color: rgba(255, 255, 255, 0.1);
     color: rgba(255, 255, 255, 0.3);
+}
+
+/* Command Suggestion Card */
+.gemini-command-card {
+    background-color: #1a1e24;
+    border: 1px solid rgba(53, 132, 228, 0.45);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin: 6px 0;
+    spacing: 8px;
+}
+
+.gemini-command-header-row {
+    spacing: 8px;
+}
+
+.gemini-command-header-left {
+    spacing: 6px;
+}
+
+.gemini-command-icon {
+    icon-size: 14px;
+    color: #78aeed;
+}
+
+.gemini-command-desc-label {
+    font-size: 12px;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.gemini-command-actions {
+    spacing: 6px;
+}
+
+.gemini-btn-content {
+    spacing: 5px;
+}
+
+.gemini-command-btn {
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.gemini-command-btn-copy {
+    background-color: rgba(255, 255, 255, 0.08);
+    color: #deddda;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.gemini-command-btn-copy:hover {
+    background-color: rgba(255, 255, 255, 0.18);
+    color: #ffffff;
+}
+
+.gemini-command-btn-exec {
+    background-color: #3584e4;
+    color: #ffffff;
+    border: 1px solid #1c71d8;
+}
+
+.gemini-command-btn-exec:hover {
+    background-color: #1c71d8;
+}
+
+.gemini-command-btn-running {
+    background-color: rgba(53, 132, 228, 0.5);
+    color: #deddda;
+}
+
+/* Command Code Box */
+.gemini-command-code-box {
+    background-color: #0d1117;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    padding: 6px 10px;
+    spacing: 4px;
+}
+
+.gemini-command-prompt-symbol {
+    font-family: monospace;
+    font-size: 12px;
+    font-weight: bold;
+    color: #57e389;
+}
+
+.gemini-command-code-text {
+    font-family: monospace;
+    font-size: 12px;
+    color: #e6edf3;
+    line-height: 1.35;
+}
+
+/* Feedback Box */
+.gemini-command-feedback-box {
+    spacing: 6px;
+    margin-top: 4px;
+}
+
+.gemini-feedback-status-row {
+    border-radius: 6px;
+    padding: 6px 10px;
+    spacing: 6px;
+}
+
+.gemini-feedback-running {
+    background-color: rgba(53, 132, 228, 0.15);
+    border: 1px solid rgba(53, 132, 228, 0.35);
+    color: #78aeed;
+}
+
+.gemini-feedback-success {
+    background-color: rgba(46, 194, 126, 0.16);
+    border: 1px solid rgba(46, 194, 126, 0.4);
+    color: #57e389;
+}
+
+.gemini-feedback-error {
+    background-color: rgba(224, 27, 36, 0.2);
+    border: 1px solid rgba(224, 27, 36, 0.45);
+    color: #ff7b72;
+}
+
+.gemini-feedback-icon {
+    icon-size: 13px;
+}
+
+.gemini-feedback-status-label {
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.gemini-command-cancel-btn {
+    background-color: rgba(224, 27, 36, 0.25);
+    color: #ff7b72;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.gemini-command-cancel-btn:hover {
+    background-color: rgba(224, 27, 36, 0.4);
+    color: #ffffff;
+}
+
+.gemini-command-copy-out-btn {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #deddda;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 10px;
+}
+
+.gemini-command-copy-out-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+}
+
+.gemini-feedback-output-container {
+    background-color: #0b0d13;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    padding: 8px 10px;
+    spacing: 4px;
+}
+
+.gemini-terminal-output-text {
+    font-family: monospace;
+    font-size: 11px;
+    line-height: 1.35;
+}
+
+.gemini-terminal-stdout {
+    color: #d0d7de;
+}
+
+.gemini-terminal-stderr {
+    color: #ffa657;
+}
+
+.gemini-feedback-empty-output {
+    font-size: 11px;
+    color: #9a9996;
+    font-style: italic;
+    padding: 2px 4px;
+}
+
+
+.gemini-retry-button {
+    margin-right: 8px;
+    margin-bottom: 0px;
+    border-radius: 50%;
+    padding: 6px;
+}
+
+.gemini-rate-limits-box {
+    padding: 4px 8px;
+    spacing: 8px;
+    background-color: transparent;
+}
+.gemini-rate-label {
+    font-size: 10px;
+    color: #999999;
+}
+.gemini-rate-progress-bg {
+    height: 6px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    width: 100px;
+    margin-top: 2px;
+}
+.gemini-rate-progress-bar {
+    height: 6px;
+    background-color: #3584e4;
+    border-radius: 3px;
 }

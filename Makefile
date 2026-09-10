@@ -1,5 +1,5 @@
 UUID = gnome-gemini@dfnasc
-EXTRA_SOURCES = geminiApi.js md2pango.js
+EXTRA_SOURCES = geminiApi.js md2pango.js systemInfo.js commandParser.js commandExecutor.js
 
 .PHONY: all compile-schemas pack install clean
 

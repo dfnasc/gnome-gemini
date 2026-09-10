@@ -6,5 +6,6 @@
   "shell-version": [
     "50"
   ],
-  "gettext-domain": "gnome-gemini"
+  "gettext-domain": "gnome-gemini",
+  "url": "https://github.com/dfnasc/gnome-gemini"
 }

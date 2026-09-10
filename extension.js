@@ -270,6 +270,7 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
 
         this._modelComboButton = new St.Button({
             style_class: 'gemini-icon-button',
+            style: 'margin-left: 20px;',
             child: modelButtonBox,
             can_focus: true,
         });
@@ -296,8 +297,7 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
                 icon_name: 'document-open-recent-symbolic',
                 icon_size: 16,
             }),
-            can_focus: true,
-            tooltip_text: _('Carregar sessões anteriores')
+            can_focus: true
         });
 
         this._historyMenu = new PopupMenu.PopupMenu(historyBtn, 0.5, St.Side.TOP);

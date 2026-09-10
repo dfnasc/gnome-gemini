@@ -160,6 +160,7 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
         this._settings = extension.getSettings();
         this._apiClient = new GeminiApiClient();
         this._history = [];
+        this._initSession();
         this._isLoading = false;
         this._isDestroyed = false;
         this._activeCommandCancellables = new Set();
@@ -287,6 +288,21 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
             x_expand: true,
         });
         headerBox.add_child(spacer);
+
+        // History button
+        const historyBtn = new St.Button({
+            style_class: 'gemini-icon-button',
+            child: new St.Icon({
+                icon_name: 'document-open-recent-symbolic',
+                icon_size: 16,
+            }),
+            can_focus: true,
+            tooltip_text: _('Carregar sessões anteriores')
+        });
+        historyBtn.connect('clicked', () => {
+            // TODO: Implement loading sessions
+        });
+        headerBox.add_child(historyBtn);
 
         // Clear / New chat button
         const clearBtn = new St.Button({
@@ -717,9 +733,48 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
         }
         this._activeCommandCancellables.clear();
         this._history = [];
+        this._sessionId = GLib.uuid_string_random();
+        this._initSession();
         this._isLoading = false;
         this._sendButton.reactive = true;
         this._showWelcomeView();
+    }
+
+    _initSession() {
+        if (!this._sessionId) {
+            this._sessionId = GLib.uuid_string_random();
+        }
+        this._historyDir = GLib.get_home_dir() + '/.gnome-gemini/history';
+        const dir = Gio.File.new_for_path(this._historyDir);
+        if (!dir.query_exists(null)) {
+            dir.make_directory_with_parents(null);
+        }
+    }
+
+    _saveSession() {
+        if (!this._sessionId || this._history.length === 0) return;
+        try {
+            this._initSession();
+            const filePath = `${this._historyDir}/${this._sessionId}.json`;
+            const file = Gio.File.new_for_path(filePath);
+            const content = new GLib.Bytes(new TextEncoder().encode(JSON.stringify(this._history, null, 2)));
+            file.replace_contents_bytes_async(
+                content,
+                null,
+                false,
+                Gio.FileCreateFlags.REPLACE_DESTINATION,
+                null,
+                (file, res) => {
+                    try {
+                        file.replace_contents_finish(res);
+                    } catch (e) {
+                        console.error(`GnomeGemini: Error saving session: ${e.message}`);
+                    }
+                }
+            );
+        } catch (e) {
+            console.error(`GnomeGemini: Error initiating session save: ${e.message}`);
+        }
     }
 
     _addUserMessage(text) {
@@ -1347,6 +1402,7 @@ class GnomeGeminiIndicator extends PanelMenu.Button {
                     role: 'model',
                     parts: [{ text: reply }],
                 });
+                this._saveSession();
             }
         } catch (error) {
             if (this._isDestroyed)
